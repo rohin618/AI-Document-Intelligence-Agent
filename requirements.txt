@@ -1,24 +1,31 @@
+# Web Framework
 fastapi
 uvicorn
 python-multipart
 
+# OCR Engines
 paddleocr
 paddlepaddle
-
 rapidocr
-
 docling
 
+# AI / LLM
 transformers
 torch
 accelerate
-
-opencv-python-headless
-
-pymupdf
-
-pillow
-
 huggingface_hub
 
+# Image Processing
+opencv-python-headless
+pillow
+
+# PDF Processing
+pymupdf
+
+# Data Processing
+numpy
+pandas
+
+# Utilities
 python-dotenv
+requests
