@@ -1,0 +1,255 @@
+  :root {
+        --ink: #0f172a;
+        --slate: #1e293b;
+        --slate-muted: #64748b;
+        --line: #e2e8f0;
+        --bg: #f6f7fb;
+        --panel: #ffffff;
+        --accent: #4f46e5;
+        --accent-soft: #eef0fd;
+        --good: #059669;
+        --good-soft: #e7f6ef;
+        --warn: #d97706;
+        --warn-soft: #fdf1e2;
+        --bad: #dc2626;
+        --bad-soft: #fce8e8;
+        --dupe: #7c3aed;
+        --dupe-soft: #f1ecfd;
+        --radius: 14px;
+      }
+
+      * {
+        font-family: "Inter", sans-serif;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      .display-font {
+        font-family: "Lexend", sans-serif;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--ink);
+      }
+
+      /* ---------- Top bar ---------- */
+      .topbar {
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .topbar .eyebrow {
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .topbar h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0;
+      }
+
+      .topbar p {
+        font-size: 0.85rem;
+        color: var(--slate-muted);
+      }
+
+      .btn-refresh {
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 8px;
+        transition:
+          transform 0.15s ease,
+          background 0.15s ease;
+      }
+
+      .btn-refresh:hover {
+        background: var(--accent);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      /* ---------- Filter panel ---------- */
+      .filter-panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      }
+
+      .filter-panel label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--slate-muted);
+        margin-bottom: 0.35rem;
+      }
+
+      .form-select,
+      .form-control {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+      }
+
+      .form-select:focus,
+      .form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+      }
+
+      /* ---------- KPI cards ---------- */
+      .kpi-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--accent);
+        border-radius: var(--radius);
+        padding: 1.1rem 1.25rem;
+        height: 100%;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        transition:
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+      }
+
+      .kpi-card:hover {
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .kpi-card .kpi-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--slate-muted);
+        margin-bottom: 0.4rem;
+      }
+
+      .kpi-card .kpi-value {
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin: 0;
+      }
+
+      .kpi-card .kpi-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+
+      .kpi-total {
+        border-left-color: var(--accent);
+      }
+      .kpi-total .kpi-icon {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .kpi-matched {
+        border-left-color: var(--good);
+      }
+      .kpi-matched .kpi-icon {
+        background: var(--good-soft);
+        color: var(--good);
+      }
+
+      .kpi-pending {
+        border-left-color: var(--warn);
+      }
+      .kpi-pending .kpi-icon {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+
+      .kpi-exceptions {
+        border-left-color: var(--bad);
+      }
+      .kpi-exceptions .kpi-icon {
+        background: var(--bad-soft);
+        color: var(--bad);
+      }
+
+      .kpi-duplicates {
+        border-left-color: var(--dupe);
+      }
+      .kpi-duplicates .kpi-icon {
+        background: var(--dupe-soft);
+        color: var(--dupe);
+      }
+
+      .kpi-value-total {
+        border-left-color: var(--ink);
+      }
+      .kpi-value-total .kpi-icon {
+        background: #eef1f6;
+        color: var(--ink);
+      }
+
+      /* ---------- Chart panels ---------- */
+      .chart-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        height: 100%;
+      }
+
+      .chart-card .card-header {
+        background: transparent;
+        border-bottom: 1px solid var(--line);
+        padding: 1rem 1.25rem;
+      }
+
+      .chart-card .card-header h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--ink);
+      }
+
+      .chart-card .card-body {
+        padding: 1.25rem;
+        position: relative;
+        height: 300px;
+      }
+
+      .section-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--slate-muted);
+        margin: 2rem 0 0.75rem;
+      }
+
+      @media (max-width: 767px) {
+        .topbar .d-flex {
+          flex-direction: column;
+          align-items: flex-start !important;
+          gap: 0.75rem;
+        }
+      }

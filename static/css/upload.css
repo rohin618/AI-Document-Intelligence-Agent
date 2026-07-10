@@ -1,0 +1,47 @@
+/* Custom Global Configuration overrides */
+body {
+    background: #f5f6fa !important;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+/* Modern Dynamic Drag & Drop Zone Styling */
+.drop-zone {
+    border: 2px dashed #dee2e6;
+    transition: all 0.25s ease-in-out;
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+.drop-zone:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+
+/* Highlight style when a file is actively dragged over the window element */
+.drop-zone.drag-over {
+    border-color: #198754;
+    background-color: #f1fcf6;
+}
+
+/* Successfully loaded layout configuration container state */
+.drop-zone.file-loaded {
+    border-color: #0d6efd;
+    background-color: #f0f6ff;
+}
+
+/* Integrated Developer Environment (IDE) Code viewer output box style definitions */
+pre.json-viewer {
+    max-height: 450px;
+    min-height: 320px;
+    overflow-y: auto;
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    border: 1px solid #2d2d2d;
+}
