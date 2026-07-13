@@ -2,651 +2,385 @@
 // GLOBAL VARIABLES
 // =========================================
 
-let allInvoices = [];
+let dashboardData = {};
 
-let supplierChart = null;
+let vendorChart = null;
 let categoryChart = null;
-let agingChart = null;
-let riskChart = null;
 
+let monthlyChart = null;
+let matchedChart = null;
+let receivedChart = null;
+
+let buyerChart = null;
+
+if (buyerChart) {
+  buyerChart.destroy();
+}
 // =========================================
-// START APPLICATION
+// APPLICATION START
 // =========================================
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadDashboard();
+  loadDashboard();
 });
 
-
-
 // =========================================
-// LOAD DASHBOARD DATA
+// LOAD DASHBOARD
 // =========================================
 
 async function loadDashboard() {
+  try {
+    const response = await fetch("/dashboard/data");
 
-    try {
-
-        const response = await fetch("/dashboard-data");
-
-        allInvoices = await response.json();
-
-        populateFilters(allInvoices);
-
-        renderDashboard(allInvoices);
-
-        attachEvents();
-
-    } catch (error) {
-
-        console.error("Dashboard Load Error:", error);
-
+    if (!response.ok) {
+      throw new Error("Failed to load dashboard data.");
     }
 
-}
+    dashboardData = await response.json();
 
+    updateSummaryCards(dashboardData.summary);
 
-// =========================================
-// RENDER DASHBOARD
-// =========================================
+    createVendorChart(dashboardData.vendors);
 
-function renderDashboard(invoices) {
+    createCategoryChart(dashboardData.categories);
 
-    updateKPIs(invoices);
+    createMonthlyChart(dashboardData.monthlySpend);
 
-    createSupplierChart(invoices);
+    createMatchedChart(dashboardData.matchedStatus);
 
-    createCategoryChart(invoices);
+    createReceivedChart(dashboardData.receivedStatus);
 
-    createAgingChart(invoices);
+    updateStatistics(dashboardData.statistics);
 
-    createRiskChart(invoices);
+    createBuyerChart(dashboardData.buyers);
 
-    renderInvoiceTable(invoices);
+    renderRecentInvoices(dashboardData.recentInvoices);
+  } catch (error) {
+    console.error("Dashboard Error:", error);
 
-}
-
-
-// =========================================
-// KPI
-// =========================================
-
-function updateKPIs(invoices) {
-
-    const totalInvoices = invoices.length;
-
-    const matchedPosted =
-        invoices.filter(i => i.status === "Matched").length;
-
-    const pendingApproval =
-        invoices.filter(i => i.approval === "Pending").length;
-
-    const exceptions =
-        invoices.filter(i => i.exception).length;
-
-    const duplicates =
-        invoices.filter(i => i.duplicate).length;
-
-    const totalValue =
-        invoices.reduce((sum, i) => sum + i.amount, 0);
-
-    document.getElementById("totalInvoices").innerText =
-        totalInvoices;
-
-    document.getElementById("matchedPosted").innerText =
-        matchedPosted;
-
-    document.getElementById("pendingApproval").innerText =
-        pendingApproval;
-
-    document.getElementById("exceptions").innerText =
-        exceptions;
-
-    document.getElementById("duplicates").innerText =
-        duplicates;
-
-    document.getElementById("totalValue").innerText =
-        "₹" + totalValue.toLocaleString();
-
+    alert("Unable to load dashboard.");
+  }
 }
 
 // =========================================
-// SUPPLIER CHART
+// SUMMARY CARDS
 // =========================================
 
-function createSupplierChart(invoices) {
+function updateSummaryCards(summary) {
+  document.getElementById("totalInvoices").innerText = summary.totalInvoices;
 
-    if (supplierChart) {
-        supplierChart.destroy();
-    }
+  document.getElementById("totalSpend").innerText =
+    "₹ " + Number(summary.totalSpend).toLocaleString();
 
-    const supplierTotals = {};
+  document.getElementById("totalVendors").innerText = summary.totalVendors;
 
-    invoices.forEach(inv => {
+  document.getElementById("totalPOs").innerText = summary.totalPOs;
 
-        supplierTotals[inv.supplier] =
-            (supplierTotals[inv.supplier] || 0) + inv.amount;
+  document.getElementById("duplicateInvoices").innerText =
+    summary.duplicateInvoices;
 
-    });
+  document.getElementById("averageInvoice").innerText =
+    "₹ " + Number(summary.averageInvoice).toLocaleString();
+}
 
-    supplierChart = new Chart(
-        document.getElementById("supplierChart"),
-        {
-            type: "bar",
+// =========================================
+// VENDOR CHART
+// =========================================
 
-            data: {
+function createVendorChart(vendors) {
+  if (vendorChart) {
+    vendorChart.destroy();
+  }
 
-                labels: Object.keys(supplierTotals),
+  vendorChart = new Chart(
+    document.getElementById("vendorChart"),
 
-                datasets: [{
+    {
+      type: "bar",
 
-                    label: "Invoice Value",
+      data: {
+        labels: vendors.map((v) => v.vendor),
 
-                    data: Object.values(supplierTotals),
+        datasets: [
+          {
+            label: "Total Spend (₹)",
 
-                    backgroundColor: "#2563EB"
+            data: vendors.map((v) => v.amount),
+          },
+        ],
+      },
 
-                }]
+      options: {
+        responsive: true,
 
-            },
+        indexAxis: "y",
 
-            options: {
-
-                responsive: true,
-
-                indexAxis: "y",
-
-                plugins: {
-
-                    legend: {
-
-                        display: false
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    );
-
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    },
+  );
 }
 
 // =========================================
 // CATEGORY CHART
 // =========================================
 
-function createCategoryChart(invoices) {
+function createCategoryChart(categories) {
+  if (categoryChart) {
+    categoryChart.destroy();
+  }
 
-    if (categoryChart) {
-        categoryChart.destroy();
-    }
+  categoryChart = new Chart(
+    document.getElementById("categoryChart"),
 
-    const categories = {};
+    {
+      type: "doughnut",
 
-    invoices.forEach(inv => {
+      data: {
+        labels: categories.map((c) => c.category),
 
-        categories[inv.category] =
-            (categories[inv.category] || 0) + 1;
+        datasets: [
+          {
+            data: categories.map((c) => c.amount),
+          },
+        ],
+      },
 
-    });
-
-    categoryChart = new Chart(
-        document.getElementById("categoryChart"),
-        {
-
-            type: "doughnut",
-
-            data: {
-
-                labels: Object.keys(categories),
-
-                datasets: [{
-
-                    data: Object.values(categories),
-
-                    backgroundColor: [
-
-                        "#2563EB",
-                        "#16A34A",
-                        "#F59E0B",
-                        "#EF4444",
-                        "#8B5CF6",
-                        "#06B6D4"
-
-                    ]
-
-                }]
-
-            },
-
-            options: {
-
-                responsive: true
-
-            }
-
-        }
-
-    );
-
+      options: {
+        responsive: true,
+      },
+    },
+  );
 }
 
 // =========================================
-// AGING CHART
+// MONTHLY SPEND
 // =========================================
 
-function createAgingChart(invoices) {
+function createMonthlyChart(monthlySpend) {
+  if (monthlyChart) {
+    monthlyChart.destroy();
+  }
 
-    if (agingChart) {
-        agingChart.destroy();
-    }
+  monthlyChart = new Chart(
+    document.getElementById("monthlyChart"),
 
-    const aging = {
+    {
+      type: "line",
 
-        "0-7":0,
-        "8-15":0,
-        "16-30":0,
-        "31-60":0,
-        "60+":0
+      data: {
+        labels: monthlySpend.map((m) => m.month),
 
-    };
+        datasets: [
+          {
+            label: "Monthly Spend",
 
-    invoices.forEach(inv=>{
+            data: monthlySpend.map((m) => m.amount),
 
-        if(inv.days<=7)
+            fill: false,
 
-            aging["0-7"]++;
+            tension: 0.3,
+          },
+        ],
+      },
 
-        else if(inv.days<=15)
-
-            aging["8-15"]++;
-
-        else if(inv.days<=30)
-
-            aging["16-30"]++;
-
-        else if(inv.days<=60)
-
-            aging["31-60"]++;
-
-        else
-
-            aging["60+"]++;
-
-    });
-
-    agingChart = new Chart(
-
-        document.getElementById("agingChart"),
-
-        {
-
-            type:"bar",
-
-            data:{
-
-                labels:Object.keys(aging),
-
-                datasets:[{
-
-                    label:"Invoices",
-
-                    data:Object.values(aging),
-
-                    backgroundColor:[
-                        "#22C55E",
-                        "#3B82F6",
-                        "#FACC15",
-                        "#F97316",
-                        "#DC2626"
-                    ]
-
-                }]
-
-            },
-
-            options:{
-
-                responsive:true,
-
-                plugins:{
-
-                    legend:{
-
-                        display:false
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    );
-
+      options: {
+        responsive: true,
+      },
+    },
+  );
 }
 
 // =========================================
-// RISK CHART
+// MATCHED STATUS
 // =========================================
 
-function createRiskChart(invoices) {
-
-    if (riskChart) {
-
-        riskChart.destroy();
-
-    }
-
-    const supplierRisk = {};
-
-    invoices.forEach(inv=>{
-
-        if(!supplierRisk[inv.supplier]){
-
-            supplierRisk[inv.supplier]={
-
-                spending:0,
-
-                risk:0
-
-            };
-
-        }
-
-        supplierRisk[inv.supplier].spending += inv.amount;
-
-        if(inv.exception)
-
-            supplierRisk[inv.supplier].risk +=2;
-
-        if(inv.duplicate)
-
-            supplierRisk[inv.supplier].risk +=3;
-
-    });
-
-    const bubbleData = Object.entries(supplierRisk).map(
-
-        ([supplier,data])=>({
-
-            x:data.spending,
-
-            y:data.risk,
-
-            r:Math.max(10,Math.sqrt(data.spending)/60),
-
-            supplier
-
-        })
-
-    );
-
-    riskChart = new Chart(
-
-        document.getElementById("riskChart"),
-
-        {
-
-            type:"bubble",
-
-            data:{
-
-                datasets:[{
-
-                    label:"Supplier Risk",
-
-                    data:bubbleData,
-
-                    backgroundColor:"#EF4444"
-
-                }]
-
-            },
-
-            options:{
-
-                responsive:true,
-
-                plugins:{
-
-                    tooltip:{
-
-                        callbacks:{
-
-                            label(context){
-
-                                const p=context.raw;
-
-                                return [
-
-                                    p.supplier,
-
-                                    "Spending : ₹"+p.x.toLocaleString(),
-
-                                    "Risk Score : "+p.y
-
-                                ];
-
-                            }
-
-                        }
-
-                    }
-
-                },
-
-                scales:{
-
-                    x:{
-
-                        title:{
-
-                            display:true,
-
-                            text:"Supplier Spending (₹)"
-
-                        }
-
-                    },
-
-                    y:{
-
-                        beginAtZero:true,
-
-                        title:{
-
-                            display:true,
-
-                            text:"Risk Score"
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    );
-
+function createMatchedChart(statusData) {
+  if (matchedChart) {
+    matchedChart.destroy();
+  }
+
+  matchedChart = new Chart(
+    document.getElementById("matchedChart"),
+
+    {
+      type: "pie",
+
+      data: {
+        labels: statusData.map((s) => s.status),
+
+        datasets: [
+          {
+            data: statusData.map((s) => s.count),
+          },
+        ],
+      },
+
+      options: {
+        responsive: true,
+      },
+    },
+  );
 }
 
 // =========================================
-// RECENT INVOICE TABLE
+// RECEIVED STATUS
 // =========================================
 
-function renderInvoiceTable(invoices) {
+function createReceivedChart(statusData) {
+  if (receivedChart) {
+    receivedChart.destroy();
+  }
 
-    const tbody = document.getElementById("invoiceTable");
+  receivedChart = new Chart(
+    document.getElementById("receivedChart"),
 
-    tbody.innerHTML = "";
+    {
+      type: "pie",
 
-    invoices.slice(0, 10).forEach(inv => {
+      data: {
+        labels: statusData.map((s) => s.status),
 
-        tbody.innerHTML += `
-            <tr>
+        datasets: [
+          {
+            data: statusData.map((s) => s.count),
+          },
+        ],
+      },
 
-                <td>${inv.invoice_number}</td>
+      options: {
+        responsive: true,
+      },
+    },
+  );
+}
+// =========================================
+// NUMPY STATISTICS
+// =========================================
 
-                <td>${inv.supplier}</td>
+function updateStatistics(statistics) {
+  document.getElementById("meanInvoice").innerText =
+    "₹ " + statistics.mean.toLocaleString();
 
-                <td>${inv.category}</td>
+  document.getElementById("medianInvoice").innerText =
+    "₹ " + statistics.median.toLocaleString();
 
-                <td>₹${inv.amount.toLocaleString()}</td>
+  document.getElementById("stdInvoice").innerText =
+    statistics.std.toLocaleString();
 
-                <td>
+  document.getElementById("maxInvoice").innerText =
+    "₹ " + statistics.maximum.toLocaleString();
 
-                    <span class="badge ${
-                        inv.status === "Matched"
-                            ? "bg-success"
-                            : "bg-warning text-dark"
-                    }">
+  document.getElementById("minInvoice").innerText =
+    "₹ " + statistics.minimum.toLocaleString();
 
-                        ${inv.status}
+  document.getElementById("percentile95").innerText =
+    "₹ " + statistics.percentile95.toLocaleString();
+}
 
-                    </span>
+function createBuyerChart(buyers) {
+  new Chart(
+    document.getElementById("buyerChart"),
 
-                </td>
+    {
+      type: "bar",
 
-            </tr>
+      data: {
+        labels: buyers.map((b) => b.buyer),
+
+        datasets: [
+          {
+            label: "Spend",
+
+            data: buyers.map((b) => b.amount),
+          },
+        ],
+      },
+    },
+  );
+}
+
+function createBuyerChart(buyers) {
+  if (buyerChart) {
+    buyerChart.destroy();
+  }
+
+  buyerChart = new Chart(
+    document.getElementById("buyerChart"),
+
+    {
+      type: "bar",
+
+      data: {
+        labels: buyers.map((b) => b.buyer),
+
+        datasets: [
+          {
+            label: "Buyer Spend",
+
+            data: buyers.map((b) => b.amount),
+          },
+        ],
+      },
+
+      options: {
+        responsive: true,
+
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    },
+  );
+}
+function renderRecentInvoices(invoices) {
+  const tbody = document.getElementById("invoiceTable");
+
+  tbody.innerHTML = "";
+
+  if (invoices.length === 0) {
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center">
+                No invoices available
+            </td>
+        </tr>
+    `;
+
+    return;
+  }
+
+  invoices.forEach((inv) => {
+    tbody.innerHTML += `
+
+        <tr>
+
+            <td>${inv.invoiceNo}</td>
+
+            <td>${inv.vendor}</td>
+
+            <td>${inv.category}</td>
+
+            <td>₹ ${Number(inv.amount).toLocaleString()}</td>
+
+            <td>${inv.status}</td>
+
+            <td>${inv.date}</td>
+
+        </tr>
+
         `;
-
-    });
-
+  });
 }
 
-// =========================================
-// POPULATE FILTERS
-// =========================================
-
-function populateFilters(invoices) {
-
-    const supplierFilter =
-        document.getElementById("supplierFilter");
-
-    const categoryFilter =
-        document.getElementById("categoryFilter");
-
-    supplierFilter.innerHTML =
-        '<option value="">All Suppliers</option>';
-
-    categoryFilter.innerHTML =
-        '<option value="">All Categories</option>';
-
-    const suppliers =
-        [...new Set(invoices.map(i => i.supplier))];
-
-    const categories =
-        [...new Set(invoices.map(i => i.category))];
-
-    suppliers.forEach(supplier => {
-
-        supplierFilter.innerHTML +=
-
-        `<option value="${supplier}">
-            ${supplier}
-        </option>`;
-
-    });
-
-    categories.forEach(category => {
-
-        categoryFilter.innerHTML +=
-
-        `<option value="${category}">
-            ${category}
-        </option>`;
-
-    });
-
-}
-
-// =========================================
-// APPLY FILTERS
-// =========================================
-
-function applyFilters() {
-
-    let filtered = [...allInvoices];
-
-    const supplier =
-        document.getElementById("supplierFilter").value;
-
-    const category =
-        document.getElementById("categoryFilter").value;
-
-    const status =
-        document.getElementById("statusFilter").value;
-
-    const search =
-        document
-        .getElementById("invoiceSearch")
-        .value
-        .toLowerCase();
-
-    if (supplier) {
-
-        filtered =
-            filtered.filter(i => i.supplier === supplier);
-
-    }
-
-    if (category) {
-
-        filtered =
-            filtered.filter(i => i.category === category);
-
-    }
-
-    if (status) {
-
-        filtered =
-            filtered.filter(i => i.status === status);
-
-    }
-
-    if (search) {
-
-        filtered =
-            filtered.filter(i =>
-                i.invoice_number
-                .toLowerCase()
-                .includes(search)
-            );
-
-    }
-
-    renderDashboard(filtered);
-
-}
-
-// =========================================
-// FILTER EVENTS
-// =========================================
-
-function attachEvents() {
-
-    document
-        .getElementById("supplierFilter")
-        .onchange = applyFilters;
-
-    document
-        .getElementById("categoryFilter")
-        .onchange = applyFilters;
-
-    document
-        .getElementById("statusFilter")
-        .onchange = applyFilters;
-
-    document
-        .getElementById("invoiceSearch")
-        .oninput = applyFilters;
-
-}
+document
+  .getElementById("refreshDashboard")
+  .addEventListener("click", loadDashboard);
+document.getElementById("lastUpdated").innerText =
+  "Updated : " + new Date().toLocaleString();

@@ -12,7 +12,7 @@ The rest of the application should only import
 this file.
 """
 
-from .ocr_factory import OCRFactory
+from .ocrFactory.ocr_factory import OCRFactory
 
 
 def extract_text(

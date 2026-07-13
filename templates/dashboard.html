@@ -27,150 +27,79 @@
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <div class="eyebrow">Accounts Payable</div>
-            <h2>AI Document Intelligence Dashboard</h2>
+            <h2>Accounts Payable Analytics Dashboard</h2>
             <p class="mb-0">
               Invoice analytics, matching status and supplier insights
             </p>
           </div>
 
-          <div>
-            <button class="btn btn-refresh">Refresh Dashboard</button>
+          <div class="d-flex flex-column align-items-end">
+            <button id="refreshDashboard" class="btn btn-refresh">
+              Refresh Dashboard
+            </button>
+            <small id="lastUpdated" class="text-muted mt-1"></small>
           </div>
         </div>
       </div>
     </div>
 
     <div class="container pb-5">
-      <!-- Filters -->
-      <!-- Filter Section -->
-
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body">
-          <div class="row g-3">
-            <div class="col-lg-3">
-              <label class="form-label fw-semibold"> Supplier </label>
-
-              <select id="supplierFilter" class="form-select">
-                <option value="">All Suppliers</option>
-              </select>
-            </div>
-
-            <div class="col-lg-3">
-              <label class="form-label fw-semibold"> Category </label>
-
-              <select id="categoryFilter" class="form-select">
-                <option value="">All Categories</option>
-              </select>
-            </div>
-
-            <div class="col-lg-3">
-              <label class="form-label fw-semibold"> Status </label>
-
-              <select id="statusFilter" class="form-select">
-                <option value="">All Status</option>
-                <option value="Matched">Matched</option>
-                <option value="Pending">Pending</option>
-              </select>
-            </div>
-
-            <div class="col-lg-3">
-              <label class="form-label fw-semibold"> Search Invoice </label>
-
-              <input
-                type="text"
-                id="invoiceSearch"
-                class="form-control"
-                placeholder="Invoice Number"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
       <!-- KPI row -->
       <div class="row g-3">
-        <div class="col-6 col-lg-4">
-          <div
-            class="kpi-card kpi-total d-flex justify-content-between align-items-start"
-          >
-            <div>
-              <div class="kpi-label">Total Invoices</div>
-              <h2 class="kpi-value" id="totalInvoices">0</h2>
-            </div>
-            <div class="kpi-icon">&#128196;</div>
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Invoices</div>
+            <h2 id="totalInvoices">0</h2>
           </div>
         </div>
 
-        <div class="col-6 col-lg-4">
-          <div
-            class="kpi-card kpi-matched d-flex justify-content-between align-items-start"
-          >
-            <div>
-              <div class="kpi-label">Matched &amp; Posted</div>
-              <h2 class="kpi-value" id="matchedPosted">0</h2>
-            </div>
-            <div class="kpi-icon">&#9989;</div>
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Spend</div>
+            <h2 id="totalSpend">₹0</h2>
           </div>
         </div>
 
-        <div class="col-6 col-lg-4">
-          <div
-            class="kpi-card kpi-pending d-flex justify-content-between align-items-start"
-          >
-            <div>
-              <div class="kpi-label">Pending Approval</div>
-              <h2 class="kpi-value" id="pendingApproval">0</h2>
-            </div>
-            <div class="kpi-icon">&#8987;</div>
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Vendors</div>
+            <h2 id="totalVendors">0</h2>
           </div>
         </div>
 
-        <div class="col-6 col-lg-4">
-          <div
-            class="kpi-card kpi-exceptions d-flex justify-content-between align-items-start"
-          >
-            <div>
-              <div class="kpi-label">Exceptions</div>
-              <h2 class="kpi-value" id="exceptions">0</h2>
-            </div>
-            <div class="kpi-icon">&#9888;</div>
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Purchase Orders</div>
+            <h2 id="totalPOs">0</h2>
           </div>
         </div>
 
-        <div class="col-6 col-lg-4">
-          <div
-            class="kpi-card kpi-duplicates d-flex justify-content-between align-items-start"
-          >
-            <div>
-              <div class="kpi-label">Duplicates</div>
-              <h2 class="kpi-value" id="duplicates">0</h2>
-            </div>
-            <div class="kpi-icon">&#128203;</div>
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Duplicate Invoices</div>
+            <h2 id="duplicateInvoices">0</h2>
           </div>
         </div>
 
-        <div class="col-6 col-lg-4">
-          <div
-            class="kpi-card kpi-value-total d-flex justify-content-between align-items-start"
-          >
-            <div>
-              <div class="kpi-label">Total Value</div>
-              <h2 class="kpi-value" id="totalValue">&#8377;0</h2>
-            </div>
-            <div class="kpi-icon">&#8377;</div>
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Average Invoice</div>
+            <h2 id="averageInvoice">₹0</h2>
           </div>
         </div>
       </div>
 
       <!-- Charts -->
       <div class="section-label">Analytics</div>
+
       <div class="row g-3">
         <div class="col-lg-6">
           <div class="chart-card">
             <div class="card-header">
-              <h5>Top Suppliers by Invoice Value</h5>
+              <h5>Top Vendors by Spend</h5>
             </div>
             <div class="card-body">
-              <canvas id="supplierChart"></canvas>
+              <canvas id="vendorChart"></canvas>
             </div>
           </div>
         </div>
@@ -178,7 +107,18 @@
         <div class="col-lg-6">
           <div class="chart-card">
             <div class="card-header">
-              <h5>Invoices by Category</h5>
+              <h5>Top Buyers by Spend</h5>
+            </div>
+            <div class="card-body">
+              <canvas id="buyerChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="card-header">
+              <h5>Category Distribution</h5>
             </div>
             <div class="card-body">
               <canvas id="categoryChart"></canvas>
@@ -189,10 +129,10 @@
         <div class="col-lg-6">
           <div class="chart-card">
             <div class="card-header">
-              <h5>Invoice Aging</h5>
+              <h5>Monthly Spend</h5>
             </div>
             <div class="card-body">
-              <canvas id="agingChart"></canvas>
+              <canvas id="monthlyChart"></canvas>
             </div>
           </div>
         </div>
@@ -200,52 +140,101 @@
         <div class="col-lg-6">
           <div class="chart-card">
             <div class="card-header">
-              <h5>Risk Distribution</h5>
+              <h5>Matched Status</h5>
             </div>
             <div class="card-body">
-              <canvas id="riskChart"></canvas>
+              <canvas id="matchedChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="card-header">
+              <h5>Received Status</h5>
+            </div>
+            <div class="card-body">
+              <canvas id="receivedChart"></canvas>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="section-label mt-4">
-    Recent Invoices
-</div>
+      <div class="section-label mt-4">Statistics</div>
 
-<div class="card shadow-sm border-0">
-
-    <div class="card-body">
-
-        <div class="table-responsive">
-
-            <table class="table table-hover align-middle">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Invoice</th>
-                        <th>Supplier</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="invoiceTable">
-
-                </tbody>
-
-            </table>
-
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="kpi-card">
+            <div class="kpi-label">Mean Invoice</div>
+            <h4 id="meanInvoice"></h4>
+          </div>
         </div>
 
-    </div>
+        <div class="col-md-3">
+          <div class="kpi-card">
+            <div class="kpi-label">Median Invoice</div>
+            <h4 id="medianInvoice"></h4>
+          </div>
+        </div>
 
-</div>
+        <div class="col-md-3">
+          <div class="kpi-card">
+            <div class="kpi-label">Std Deviation</div>
+            <h4 id="stdInvoice"></h4>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="kpi-card">
+            <div class="kpi-label">Maximum Invoice</div>
+            <h4 id="maxInvoice"></h4>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="kpi-card">
+            <div class="kpi-label">Minimum Invoice</div>
+            <h4 id="minInvoice"></h4>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="kpi-card">
+            <div class="kpi-label">95th Percentile</div>
+            <h4 id="percentile95"></h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label mt-4">Recent Invoices</div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table
+              class="table table-hover table-striped align-middle text-center"
+            >
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+
+                  <th>Vendor</th>
+
+                  <th>Category</th>
+
+                  <th>Amount</th>
+
+                  <th>Status</th>
+
+                  <th>Date</th>
+                </tr>
+              </thead>
+
+              <tbody id="invoiceTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -124,5 +124,45 @@
         "compliance_issue": false,
         "days": 0,
         "aging_bucket": "0-7"
+    },
+    {
+        "error": "400 Client Error: Bad Request for url: https://router.huggingface.co/v1/chat/completions",
+        "status": "Pending",
+        "approval": "Pending",
+        "duplicate": false,
+        "exception": false,
+        "payment_delay": false,
+        "compliance_issue": false,
+        "days": 0,
+        "aging_bucket": "0-7"
+    },
+    {
+        "error": "{\"error\":{\"message\":\"The requested model 'Qwen/Qwen2.5-0.5B-Instruct' is not supported by any provider you have enabled.\",\"type\":\"invalid_request_error\",\"param\":\"model\",\"code\":\"model_not_supported\"}}",
+        "status": "Pending",
+        "approval": "Pending",
+        "duplicate": false,
+        "exception": false,
+        "payment_delay": false,
+        "compliance_issue": false,
+        "days": 0,
+        "aging_bucket": "0-7"
+    },
+    {
+        "invoice_number": "1213",
+        "invoice_date": "16.12.2021",
+        "due_date": "16.12.2021",
+        "supplier": "Zencorporations",
+        "buyer": "Tel + 49 228 698629",
+        "category": "Other",
+        "currency": "EUR",
+        "amount": 2809.3,
+        "status": "Pending",
+        "approval": "Pending",
+        "duplicate": false,
+        "exception": false,
+        "payment_delay": false,
+        "compliance_issue": false,
+        "days": 0,
+        "aging_bucket": "0-7"
     }
 ]
