@@ -1,3 +1,14 @@
-from utils.database.database import load_excel
+from utils.dashboard_chat.dashboard_chat import ask_dashboard_ai
+from utils.analytics.analytics import get_dashboard_data
 
-load_excel()
+dashboard = get_dashboard_data()
+
+question = "Which supplier has the highest spend?"
+
+
+answer = ask_dashboard_ai(
+    dashboard,
+    question
+)
+
+print(answer)

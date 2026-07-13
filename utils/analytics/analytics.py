@@ -3,6 +3,9 @@ import numpy as np
 
 from utils.database.database import get_connection
 
+from utils.ml.linear_regression import predict_monthly_spend
+from utils.ml.anomaly_detection import detect_anomalies
+
 
 def load_invoice_data():
 
@@ -18,7 +21,6 @@ def load_invoice_data():
 def get_dashboard_summary(df):
 
     duplicates = df.duplicated(subset=["Invoice No"], keep=False).sum()
-
 
     return {
         "totalInvoices": len(df),
@@ -112,6 +114,10 @@ def get_dashboard_data():
 
     df = load_invoice_data()
 
+    prediction = predict_monthly_spend(df)
+
+    anomaly = detect_anomalies(df)
+
     return {
         "summary": get_dashboard_summary(df),
         "vendors": get_vendor_ranking(df),
@@ -125,6 +131,8 @@ def get_dashboard_data():
         "vendorInvoiceCount": get_vendor_invoice_count(df),
         "matchingPercentage": get_matching_percentage(df),
         "categoryCount": get_category_count(df),
+        "prediction": prediction,
+        "anomaly": anomaly,
     }
 
 

@@ -16,6 +16,10 @@ let buyerChart = null;
 if (buyerChart) {
   buyerChart.destroy();
 }
+
+let predictionChart = null;
+let anomalyChart = null;
+
 // =========================================
 // APPLICATION START
 // =========================================
@@ -55,6 +59,10 @@ async function loadDashboard() {
     createBuyerChart(dashboardData.buyers);
 
     renderRecentInvoices(dashboardData.recentInvoices);
+
+    createPredictionChart(dashboardData.prediction);
+
+    createAnomalyChart(dashboardData.anomaly);
   } catch (error) {
     console.error("Dashboard Error:", error);
 
@@ -384,3 +392,105 @@ document
   .addEventListener("click", loadDashboard);
 document.getElementById("lastUpdated").innerText =
   "Updated : " + new Date().toLocaleString();
+
+function createPredictionChart(data) {
+  if (predictionChart) {
+    predictionChart.destroy();
+  }
+
+  predictionChart = new Chart(
+    document.getElementById("predictionChart"),
+
+    {
+      type: "line",
+
+      data: {
+        labels: data.labels,
+
+        datasets: [
+          {
+            label: "Actual Spend",
+
+            data: data.actual,
+
+            borderWidth: 3,
+
+            tension: 0.4,
+          },
+
+          {
+            label: "Predicted Spend",
+
+            data: data.predicted,
+
+            borderWidth: 3,
+
+            borderDash: [10, 5],
+
+            tension: 0.4,
+          },
+        ],
+      },
+
+      options: {
+        responsive: true,
+
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    },
+  );
+}
+function createAnomalyChart(data) {
+  if (anomalyChart) {
+    anomalyChart.destroy();
+  }
+
+  anomalyChart = new Chart(
+    document.getElementById("anomalyChart"),
+
+    {
+      type: "bar",
+
+      data: {
+        labels: data.labels,
+
+        datasets: [
+          {
+            label: "Invoice Amount",
+
+            data: data.amounts,
+
+            backgroundColor: "#ef4444",
+
+            borderRadius: 6,
+          },
+        ],
+      },
+
+      options: {
+        responsive: true,
+
+        indexAxis: "y",
+
+        plugins: {
+          legend: {
+            display: false,
+          },
+
+          tooltip: {
+            callbacks: {
+              afterLabel: function (context) {
+                return "Vendor : " + data.vendors[context.dataIndex];
+              },
+            },
+          },
+        },
+      },
+    },
+  );
+}
+

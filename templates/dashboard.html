@@ -16,6 +16,7 @@
       rel="stylesheet"
     />
     <link href="/static/css/dashboard.css" rel="stylesheet" />
+    <link href="/static/css/chatbox.css" rel="stylesheet" />
 
     <style></style>
   </head>
@@ -160,6 +161,36 @@
         </div>
       </div>
 
+      <div class="section-label mt-4">Machine Learning Analytics</div>
+
+      <div class="row g-3">
+        <!-- Linear Regression -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="card-header">
+              <h5>Monthly Spend Prediction (Linear Regression)</h5>
+            </div>
+
+            <div class="card-body">
+              <canvas id="predictionChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Isolation Forest -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="card-header">
+              <h5>Invoice Anomaly Detection</h5>
+            </div>
+
+            <div class="card-body">
+              <canvas id="anomalyChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="section-label mt-4">Statistics</div>
 
       <div class="row g-3">
@@ -235,9 +266,86 @@
           </div>
         </div>
       </div>
+
+      <!-- AI Dashboard Copilot -->
+      <div class="card shadow-sm mt-4 copilot-card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center copilot-header"
+        >
+          <div class="d-flex align-items-center gap-2">
+            <div class="copilot-avatar">🤖</div>
+            <div>
+              <h5 class="mb-0">Dashboard Copilot</h5>
+              <small class="copilot-subtitle">AI-powered insights</small>
+            </div>
+          </div>
+          <span class="status-pill">
+            <span class="status-dot"></span>
+            Online
+          </span>
+        </div>
+
+        <div class="card-body p-0">
+          <!-- Chat Messages -->
+          <div id="chatMessages" class="chat-container">
+            <div class="ai-message">
+              <div class="msg-avatar">🤖</div>
+              <div class="msg-bubble">
+                <p class="mb-2">
+                  👋 Hi! I'm your Dashboard Copilot. Ask me anything about your
+                  invoices, suppliers, or spend trends.
+                </p>
+                <div class="suggestion-chips">
+                  <button
+                    class="chip"
+                    data-q="Which supplier has highest spend?"
+                  >
+                    💰 Highest spend supplier
+                  </button>
+                  <button class="chip" data-q="Show anomalous invoices.">
+                    ⚠️ Anomalous invoices
+                  </button>
+                  <button class="chip" data-q="Predict next month's spend.">
+                    📈 Predict next month
+                  </button>
+                  <button class="chip" data-q="Give a business summary.">
+                    📋 Business summary
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input -->
+          <div class="chat-input-area">
+            <textarea
+              id="chatQuestion"
+              class="form-control"
+              rows="1"
+              placeholder="Ask about your dashboard..."
+            ></textarea>
+            <button id="askAIButton" class="send-btn" aria-label="Send message">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/chatbox.js"></script>
   </body>
 </html>
